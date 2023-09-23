@@ -7,7 +7,7 @@ And it cool twice becose this repo is my first.
 This game goes on cell-grid field and it goes automaticly.
 Player can only set the first positions of "living" cells.
 Then the game get started, computer calculate and show new
-generations of living cells, based on which cell was choosen
+generations of living cells, based on which cells were choosen
 by player, and all the next generations based on the previos one.
 To calculate new positions of living cells algorithm use the
 next one rules:
