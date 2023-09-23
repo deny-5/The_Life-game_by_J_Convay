@@ -37,36 +37,52 @@
 			</div>
 		</section>
 		<script>
+			//OOP - REALISATION
 
 
-		let elem = document.getElementById("13_grid_item");
-		let color = "#b1d28f";
-		
-		function blink(elem, color) {
-			if(color === undefined)
-			elem.setAttribute("style","");
-			else
-			elem.setAttribute("style",`background:${color}`);
-		};
-		
-		function changeCoord(elem) {
-			let i = elem.getAttribute("id");
-			i = parseInt(i);
-			i++;
-			elem = document.getElementById(`${i}_grid_item`);
-			return elem;
-		};
-		
-		function delay(elem, color) {
-			elem = changeCoord(elem);
-			setTimeout(blink, 500, elem, color);
-			blink(elem);
-			
-		};
-		// setInterval(changeCoord, 1000, elem);
-		setInterval(delay, 2000, elem, color);
-		
-		
+			const GREEN = "#b1d28f";
+			const DEFAULT = "";			
+
+			let cell = {
+				
+				color: DEFAULT,
+				idnum: 1,
+				elem: document.getElementById(`1_grid_item`),
+
+				setCell(){
+					this.elem = document.getElementById(`${this.idnum}_grid_item`);
+				},
+
+				incrId(){this.idnum++ ; return this;},
+
+				moveCell(){this.incrId().setCell();},
+
+				changeColor(){
+					this.color = (this.color == DEFAULT) ? GREEN: DEFAULT;
+				},
+
+				setColor(){
+					this.changeColor();
+					this.elem.setAttribute(`style`, `background:${this.color}`);
+				},
+				
+
+			}
+
+			function blink(cell){
+
+				setTimeout(() => {
+
+					cell.setColor();
+
+					setTimeout(()=> cell.moveCell(), 100);
+
+				}, 150);
+				cell.setColor();
+			}
+
+			setInterval(blink, 250, cell);
+
 		</script>
 	</body>
 </html>
