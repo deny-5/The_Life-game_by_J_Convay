@@ -1,0 +1,72 @@
+<!Doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<title>Grid attempt 1</title>
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<section id="flex_container">
+			<div class="grid_box">
+				<div id="1_grid_item"></div>
+				<div id="2_grid_item"></div>
+				<div id="3_grid_item"></div>
+				<div id="4_grid_item"></div>
+				<div id="5_grid_item"></div>
+				<div id="6_grid_item"></div>
+				<div id="7_grid_item"></div>
+				<div id="8_grid_item"></div>
+				<div id="9_grid_item"></div>
+				<div id="10_grid_item"></div>
+				<div id="11_grid_item"></div>
+				<div id="12_grid_item"></div>
+				<div id="13_grid_item"></div>
+				<div id="14_grid_item"></div>
+				<div id="15_grid_item"></div>
+				<div id="16_grid_item"></div>
+				<div id="17_grid_item"></div>
+				<div id="18_grid_item"></div>
+				<div id="19_grid_item"></div>
+				<div id="20_grid_item"></div>
+				<div id="21_grid_item"></div>
+				<div id="22_grid_item"></div>
+				<div id="23_grid_item"></div>
+				<div id="24_grid_item"></div>
+				<div id="25_grid_item"></div>
+			</div>
+		</section>
+		<script>
+
+
+		let elem = document.getElementById("13_grid_item");
+		let color = "#b1d28f";
+		
+		function blink(elem, color) {
+			if(color === undefined)
+			elem.setAttribute("style","");
+			else
+			elem.setAttribute("style",`background:${color}`);
+		};
+		
+		function changeCoord(elem) {
+			let i = elem.getAttribute("id");
+			i = parseInt(i);
+			i++;
+			elem = document.getElementById(`${i}_grid_item`);
+			return elem;
+		};
+		
+		function delay(elem, color) {
+			elem = changeCoord(elem);
+			setTimeout(blink, 500, elem, color);
+			blink(elem);
+			
+		};
+		// setInterval(changeCoord, 1000, elem);
+		setInterval(delay, 2000, elem, color);
+		
+		
+		</script>
+	</body>
+</html>
