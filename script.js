@@ -56,8 +56,8 @@ let field = {
 let form = document.getElementsByName("number");
 let button = document.getElementById('button');
 button.onclick = function() {
-    if ( form[0].value < 2 || form[0].value > 58) {
-        alert("Число должно находится в диапазоне от 10 до 58");
+    if ( form[0].value < 2 || form[0].value > 100) {
+        alert("Число должно находится в диапазоне от 2 до 100");
     } else {
         field.createField(form[0].value);
     }

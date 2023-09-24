@@ -39,7 +39,7 @@
 		<script>
 			//OOP - REALISATION
 
-
+			const MAX_ELEM = 25;
 			const GREEN = "#b1d28f";
 			const DEFAULT = "";			
 
@@ -53,7 +53,7 @@
 					this.elem = document.getElementById(`${this.idnum}_grid_item`);
 				},
 
-				incrId(){this.idnum++ ; return this;},
+				incrId(){(this.idnum == MAX_ELEM) ? this.idnum = 1 :  this.idnum++ ; return this;},
 
 				moveCell(){this.incrId().setCell();},
 
@@ -81,7 +81,7 @@
 				cell.setColor();
 			}
 
-			// setInterval(blink, 500, cell);
+			setInterval(blink, 500, cell);
 
 		</script>
 	</body>
