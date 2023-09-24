@@ -1,23 +1,37 @@
 // SCRIPT FOR GRID GENERATION
 
+// Аабсолютный размер - сторона квадрата сетки в px
 const SIDE = 580;
 
+// Объект для инкапсуляции кода создания сетки
 let field = {
 
     cellNum: 0,
     cellSize: 0,
     elemNumb: 1,
-
-    getParam() {
-        do {
-            this.cellNum = +prompt("Введите параметр поля", "10...58");
-        } while (this.cellNum < 10 || this.cellNum > 58);
-    },
-
+    
+    // запрашивает  у пользователя количество клеток в стороне квадратного поля
+    getParam(param) {this.cellNum = +param;}, 
+    
+    // Вычисляет размер клетки по заданному количеству и размеру поля
     calcCellSize() { this.cellSize = SIDE / this.cellNum; },
- 
-    createField() {
-        this.getParam();
+
+    //Метод для очистки сетки
+    clearField() {
+        if(this.elemNumb != 1) {
+            let node = document.getElementById("grid_box");
+            while(node.firstChild){
+                node.removeChild(node.firstChild);
+            }
+        }
+    },
+    
+    // Создает квадратное поле с количеством ячеек вдоль стороны,
+    // указаном пользователем. Изменяет параметры grid-контейнера,
+    // заполняет его узлами пронумерованными в атрибуте класс. 
+    createField(param) {
+        this.clearField();
+        this.getParam(param);
         this.calcCellSize();
 
         let elem = document.getElementById("grid_box");
@@ -35,9 +49,16 @@ let field = {
             }     
         }
     },
-
 }
 
-field.createField();
 
 
+let form = document.getElementsByName("number");
+let button = document.getElementById('button');
+button.onclick = function() {
+    if ( form[0].value < 2 || form[0].value > 58) {
+        alert("Число должно находится в диапазоне от 10 до 58");
+    } else {
+        field.createField(form[0].value);
+    }
+}

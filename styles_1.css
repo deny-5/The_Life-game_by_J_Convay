@@ -6,7 +6,9 @@ body {background: rgb(17,24,39);}
 	border-radius: 20px;
 	margin: 5px 45px 45px 45px;
 	padding: 25px;
-	flex: 1;
+	/* flex: 1; */
+	display: flex;
+	flex-direction:row;
 }
 
 #grid_box {
@@ -14,21 +16,38 @@ body {background: rgb(17,24,39);}
 	grid-gap: 1px;
 	grid-template-rows: repeat(10, 58px);
 	grid-template-columns:  repeat(10, 58px);
-	/* grid-auto-rows: 100px;
-	grid-auto-columns: 100px; */
-	/* grid-auto-flow: row; */
 	background-color: #bdf;
 	border: 0px solid;
 	border-radius: 5px;
-	/* align-items: center; */
 	justify-content: center;
+	flex: 0 1 auto;
+	flex-wrap: wrap;
 }
 
 [class$='grid_el'] {
 	display: grid;
 	outline: 0px solid ;
-	border-radius: 5px;
+	border-radius: 2px;
 	background-color: #b1d28f;
 }
 
 [class$='grid_el']:hover {background-color:#bdf;}
+
+#input_box {
+	background: #bdf;
+	margin: 0px 45px 45px 45px;
+	padding: 15px;
+	border: 0.5px solid;
+	border-radius: 15px;
+
+	height: 25px;
+
+	/* display: flex; */
+	flex: 0 1 auto;
+	flex-direction: row;
+	/* text-align: center; */
+	justify-content: center;
+	margin-left: auto;
+
+	/* flex-wrap: wrap; */
+}
