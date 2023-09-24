@@ -11,7 +11,7 @@ body {background: rgb(17,24,39);}
 
 #grid_box {
 	display: inline-grid;
-	grid-gap: 5px;
+	grid-gap: 1px;
 	grid-template-rows: repeat(10, 58px);
 	grid-template-columns:  repeat(10, 58px);
 	/* grid-auto-rows: 100px;
