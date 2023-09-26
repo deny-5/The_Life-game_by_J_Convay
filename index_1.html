@@ -9,11 +9,22 @@
 	<body>
 		<section id="flex_container">
 			<div id="grid_box"></div>
-			<div id="input_box" title="Введите количество ячеек на сторону поля"
-			id="input_num">
-				<input id="input" type="text" name="number">
-				<input id="button" type="button" value="Go">
+			<div id="flex_form">
 				
+				<div id="input_box_1" title="2-100" >
+					<div>Введите количество ячеек на сторону поля</div>
+					<div>					
+						<input id="input" type="text" name="number">
+						<input id="button" type="button" value="Go">
+					</div>
+				</div>
+				<div id="input_box_2">
+					<div id="header">
+						Тестовое окно
+						<input id="test_button" type="button" value="Test">
+					</div>
+					<div id="output"></div>
+				</div>
 			</div>
 		</section>
 		<script src="script.js"></script>

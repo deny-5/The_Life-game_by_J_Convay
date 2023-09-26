@@ -2,6 +2,8 @@
 
 // Аабсолютный размер - сторона квадрата сетки в px
 const SIDE = 580;
+const DEFAULT = "#bdf";
+const ACTIVE = "#b1d28f";
 
 // Объект для инкапсуляции кода создания сетки
 let field = {
@@ -16,6 +18,18 @@ let field = {
     // Вычисляет размер клетки по заданному количеству и размеру поля
     calcCellSize() { this.cellSize = SIDE / this.cellNum; },
 
+    //Метод для создания декартовых кординат
+    decartCords() {
+        let y = (this.elemNumb % this.cellNum == 0) 
+            ? (this.elemNumb / this.cellNum)
+            : (Math.trunc(this.elemNumb / this.cellNum)+1);
+        let x = (this.elemNumb % this.cellNum == 0)
+            ? this.cellNum
+            : this.elemNumb % this.cellNum;
+        let stringyx = `${y}.${x}`;
+        return stringyx;
+    },
+
     //Метод для очистки сетки
     clearField() {
         if(this.elemNumb != 1) {
@@ -23,7 +37,16 @@ let field = {
             while(node.firstChild){
                 node.removeChild(node.firstChild);
             }
+            this.elemNumb = 1;
         }
+    },
+
+    //Метод для реагирования на щелчок мышью
+    setCell() {
+        console.log(cordParse(this.className));
+        
+        this.setAttribute('style', `background-color:${ACTIVE};`);
+            
     },
     
     // Создает квадратное поле с количеством ячеек вдоль стороны,
@@ -43,8 +66,10 @@ let field = {
         for (let i = 1 ; i <= this.cellNum ; i++) {
             for(let j = 1; j <= this.cellNum ; j++) {
                 let newdiv = document.createElement("div");
-                newdiv.className = `${this.elemNumb}_grid_el`;
+                newdiv.className = `${this.decartCords()}_grid_el`;
+                newdiv.onclick = this.setCell;
                 elem.append(newdiv);
+                // console.log(cordParse(newdiv.className));               //test
                 this.elemNumb++;
             }     
         }
@@ -61,4 +86,17 @@ button.onclick = function() {
     } else {
         field.createField(form[0].value);
     }
+}
+
+
+//Функция строковой обработки для получения пары числовых кординат
+//я не уверен должна ли эта функция быть определена для обьекта игрового
+//поля либо для какого то другого(к примеру для обьекта вычислителя)
+//по этому пусть пока что полежит в глобальной области видимости
+function cordParse(string) {
+    let y = Math.trunc(parseFloat(string));
+    let pos = string.indexOf(".", 0);
+    let cutstr = string.slice(pos+1);
+    let x = parseInt(cutstr);
+    return [y, x];
 }
