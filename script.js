@@ -66,13 +66,12 @@ let field = {
                 newdiv.className = `${this.decartCords()}_grid_el`;
                 newdiv.onclick = this.setCell;
                 elem.append(newdiv);
-                // console.log(cordParse(newdiv.className));               //test
                 this.elemNumb++;
             }     
         }
     },
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Объект для выбора живых клеток
 let selectUnit = {
 
@@ -80,6 +79,15 @@ let selectUnit = {
     listOfcord: [],
     cordPair: [],
     cellsCount: 0,
+
+    //Функция строковой обработки для получения пары числовых кординат
+    cordParse(string) {
+            let y = Math.trunc(parseFloat(string));
+            let pos = string.indexOf(".", 0);           //Ищет точку с начала строки
+            let cutstr = string.slice(pos+1);
+            let x = parseInt(cutstr);
+            return [y, x];
+        },
 
     //Служебный метод очистки
     flushAll() {
@@ -89,11 +97,11 @@ let selectUnit = {
     //Метод для выбора колекции элементов живых клеток
     selectCells() {
         this.flushAll();
-        let allGrid = document.querySelectorAll("#grid_box div");
-        for (let grid_el of allGrid) {      
+        this.listOfcells = document.querySelectorAll("#grid_box div");
+        for (let grid_el of this.listOfcells) {      
             if(grid_el.style.backgroundColor != "") {
                 let strcord = grid_el.getAttribute("class");
-                this.cordPair = cordParse(strcord);
+                this.cordPair = this.cordParse(strcord);
                 this.listOfcord.push(this.cordPair);
                 this.cellsCount++;                          //Просто так
             }
@@ -101,7 +109,7 @@ let selectUnit = {
         return this.listOfcord;
     }
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Объет расчета нового поколения
 let arithmCore = {
     
@@ -277,10 +285,38 @@ let arithmCore = {
 
         return this.newGen;
     },
-
-
 } 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Объект для функций отрисовки
+let renderUnit = {
 
+    pair: [],
+
+    getPair(cordPair){},
+    //Создать живую клетку по кординатам в массиве переданном в параметре
+    spawnOneCell(cordPair) {
+        let elem = document
+            .querySelector(
+            `div[class="${cordPair[0]}.${cordPair[1]}_grid_el"]`);
+        elem.setAttribute('style', `background-color:${ACTIVE};`);  
+    },
+    //Создать конфигурацию клеток по массиву пар чисел
+    spawnGen(arrPair) {
+        for (let pairEl of arrPair) {
+            this.spawnOneCell(arrPair);
+        }
+    },
+    //Очистить игровое поле
+    clearCurrGrid() {
+        let Grid = document.querySelectorAll("div[class$='grid_el']");
+        for (let el of Grid) {
+            el.setAttribute("style", "background=''");
+        }
+    },
+
+
+
+}
 
 
 let testButton = document.getElementById('test_button');
@@ -294,17 +330,4 @@ button.onclick = function() {
     } else {
         field.createField(form[0].value);
     }
-}
-
-
-//Функция строковой обработки для получения пары числовых кординат
-//я не уверен должна ли эта функция быть определена для обьекта игрового
-//поля либо для какого то другого(к примеру для обьекта вычислителя)
-//по этому пусть пока что полежит в глобальной области видимости
-function cordParse(string) {
-    let y = Math.trunc(parseFloat(string));
-    let pos = string.indexOf(".", 0);
-    let cutstr = string.slice(pos+1);
-    let x = parseInt(cutstr);
-    return [y, x];
 }
