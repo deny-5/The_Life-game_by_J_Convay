@@ -5,12 +5,42 @@ const SIDE = 580;
 const DEFAULT = "#bdf";
 const ACTIVE = "#b1d28f";
 
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Объект для инкапсуляции кода создания сетки
 let field = {
 
     cellNum: 0,
     cellSize: 0,
     elemNumb: 1,
+
+    // Создает квадратное поле с количеством ячеек вдоль стороны,
+    // указаном пользователем. Изменяет параметры grid-контейнера,
+    // заполняет его узлами пронумерованными в атрибуте класс. 
+    createField(param) {
+        this.clearField();
+        this.getParam(param);
+        this.calcCellSize();
+
+        let elem = document.getElementById("grid_box");
+        elem.setAttribute(`style`,`grid-template-rows:
+                                   repeat(${this.cellNum},${this.cellSize}px);
+                                   grid-template-columns: 
+                                   repeat(${this.cellNum},${this.cellSize}px);`);
+        
+        for (let i = 1 ; i <= this.cellNum ; i++) {
+            for(let j = 1; j <= this.cellNum ; j++) {
+                let newdiv = document.createElement("div");
+                newdiv.className = `${this.decartCords()}_grid_el`;
+                newdiv.onclick = this.setCell;
+                elem.append(newdiv);
+                this.elemNumb++;
+            }     
+        }
+    },
     
     // запрашивает  у пользователя количество клеток в стороне квадратного поля
     getParam(param) {this.cellNum = +param;}, 
@@ -45,31 +75,6 @@ let field = {
     setCell() {    
         this.setAttribute('style', `background-color:${ACTIVE};`);       
     },
-    
-    // Создает квадратное поле с количеством ячеек вдоль стороны,
-    // указаном пользователем. Изменяет параметры grid-контейнера,
-    // заполняет его узлами пронумерованными в атрибуте класс. 
-    createField(param) {
-        this.clearField();
-        this.getParam(param);
-        this.calcCellSize();
-
-        let elem = document.getElementById("grid_box");
-        elem.setAttribute(`style`,`grid-template-rows:
-                                   repeat(${this.cellNum},${this.cellSize}px);
-                                   grid-template-columns: 
-                                   repeat(${this.cellNum},${this.cellSize}px);`);
-        
-        for (let i = 1 ; i <= this.cellNum ; i++) {
-            for(let j = 1; j <= this.cellNum ; j++) {
-                let newdiv = document.createElement("div");
-                newdiv.className = `${this.decartCords()}_grid_el`;
-                newdiv.onclick = this.setCell;
-                elem.append(newdiv);
-                this.elemNumb++;
-            }     
-        }
-    },
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Объект для выбора живых клеток
@@ -78,7 +83,7 @@ let selectUnit = {
     listOfcells: [],
     listOfcord: [],
     cordPair: [],
-    cellsCount: 0,
+    //cellsCount: 0,
 
     //Функция строковой обработки для получения пары числовых кординат
     cordParse(string) {
@@ -103,7 +108,7 @@ let selectUnit = {
                 let strcord = grid_el.getAttribute("class");
                 this.cordPair = this.cordParse(strcord);
                 this.listOfcord.push(this.cordPair);
-                this.cellsCount++;                          //Просто так
+                //this.cellsCount++;                          //Просто так
             }
         }
         return this.listOfcord;
@@ -120,7 +125,6 @@ let arithmCore = {
     neithboursAll: [],
     survives: [],     
     newiesList: [],
-    newGen: [],
 
     pair:[],
 
@@ -130,6 +134,31 @@ let arithmCore = {
         this.currGen = arr.slice();
     },
 
+    //Главный метод арифметического ядра
+    //После вызова init объект имеет заполненые поля
+    //gridSide и currGen фууф)) ну поехали
+    nextGenCalculus(){
+
+        this.findSurvives();
+        this.findAllN();
+        this.findNewies();
+
+        let newGen = [];
+
+        while (this.survives.length > 0){
+            let pair = this.survives.shift();
+            newGen.push(pair);            
+        }
+
+        while (this.newiesList.length > 0){
+            let pair = this.newiesList.shift();
+            newGen.push(pair);            
+        }
+
+        this.flushObj();        
+
+        return newGen;
+    },
     //Метод сравнения двух массивов из двух элементов
     comparePair(arr1, arr2) {           
         return (arr1[0] == arr2[0])?((arr1[1] == arr2[1])?true:false):false; 
@@ -261,30 +290,6 @@ let arithmCore = {
         this.neithboursAll = [];
         this.pair = [];
     },
-
-    //Главный метод арифметического ядра
-    //После вызова init объект имеет заполненые поля
-    //gridSide и currGen фууф)) ну поехали
-    nextGenCalculus(){
-
-        this.findSurvives();
-        this.findAllN();
-        this.findNewies();
-
-        while (this.survives.length > 0){
-            let pair = this.survives.shift();
-            this.newGen.push(pair);            
-        }
-
-        while (this.newiesList.length > 0){
-            let pair = this.newiesList.shift();
-            this.newGen.push(pair);            
-        }
-
-        this.flushObj();        
-
-        return this.newGen;
-    },
 } 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Объект для функций отрисовки
@@ -313,15 +318,73 @@ let renderUnit = {
             el.setAttribute("style", "background=''");
         }
     },
+}
+
+
+
+                // ****MAIN GAME SICLE****
+////////////////////////////////////////////////////////////////
+
+function gameIteration() {
+
+    let currentSize = field.cellNum;
+
+    let currentGen = selectUnit.selectCells();
+
+    arithmCore.init(currentGen, currentSize);
+
+    let nextGen = arithmCore.nextGenCalculus();
+
+    
 
 
 
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 let testButton = document.getElementById('test_button');
 let testWindow = document.getElementById('output');
-testButton.onclick = function() {console.log(selectUnit.selectCells());}
+testButton.onclick = function() {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 let form = document.getElementsByName("number");
 let button = document.getElementById('button');
 button.onclick = function() {
