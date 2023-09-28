@@ -182,7 +182,7 @@ let arithmCore = {
     },
 
     //Метод обралотки рождения клетки за пределами сетки
-    OFCheck(Value) {
+    OFCheck(value) {
         if(value > this.gridSide) return 0;
         else if (value < 1) return this.gridSide;
         else return value;
@@ -190,75 +190,73 @@ let arithmCore = {
 
     //Вычислить соседей данной клетки
     findNeithbour(coupleCord) {
-        
+        let neithb = [];
         this.pair.push(                     //1
-            this.OFCheck(coupleCord.slice()[0]),
-            this.OFCheck(coupleCord.slice()[0]+1)
+            (coupleCord.slice()[0]),
+            (coupleCord.slice()[1]+1)
         );        
-        this.neithbours.push(this.pair);
+        neithb.push(this.pair);
         this.pair = [];         
         this.pair.push(                     //1
-            this.OFCheck(coupleCord.slice()[0]+1),
-            this.OFCheck(coupleCord.slice()[0])
+            (coupleCord.slice()[0]+1),
+            (coupleCord.slice()[1])
         );        
-        this.neithbours.push(this.pair);
+        neithb.push(this.pair);
         this.pair = [];    
         this.pair.push(                     //1
-            this.OFCheck(coupleCord.slice()[0]+1),
-            this.OFCheck(coupleCord.slice()[0]-1)
+            (coupleCord.slice()[0]+1),
+            (coupleCord.slice()[1]-1)
         );        
-        this.neithbours.push(this.pair);
+        neithb.push(this.pair);
         this.pair = [];        
         this.pair.push(                     //1
-            this.OFCheck(coupleCord.slice()[0]+1),
-            this.OFCheck(coupleCord.slice()[0]+1)
+            (coupleCord.slice()[0]+1),
+            (coupleCord.slice()[1]+1)
         );        
-        this.neithbours.push(this.pair);
+        neithb.push(this.pair);
         this.pair = [];         
         this.pair.push(                     //1
-            this.OFCheck(coupleCord.slice()[0]),
-            this.OFCheck(coupleCord.slice()[0]-1)
+            (coupleCord.slice()[0]),
+            (coupleCord.slice()[1]-1)
         );        
-        this.neithbours.push(this.pair);
+        neithb.push(this.pair);
         this.pair = [];         
         this.pair.push(                     //1
-            this.OFCheck(coupleCord.slice()[0]-1),
-            this.OFCheck(coupleCord.slice()[0])
+            (coupleCord.slice()[0]-1),
+            (coupleCord.slice()[1])
         );        
-        this.neithbours.push(this.pair);
+        neithb.push(this.pair);
         this.pair = [];         
         this.pair.push(                     //1
-            this.OFCheck(coupleCord.slice()[0]-1),
-            this.OFCheck(coupleCord.slice()[0]+1)
+            (coupleCord.slice()[0]-1),
+            (coupleCord.slice()[1]+1)
         );        
-        this.neithbours.push(this.pair);
+        neithb.push(this.pair);
         this.pair = [];        
         this.pair.push(                     //1
-            this.OFCheck(coupleCord.slice()[0]-1),
-            this.OFCheck(coupleCord.slice()[0]-1)
+            (coupleCord.slice()[0]-1),
+            (coupleCord.slice()[1]-1)
         );        
-        this.neithbours.push(this.pair);
+        neithb.push(this.pair);
         this.pair = [];
 
-        return this.neithbours;             //!!!
+        return neithb;             //!!!
     },
 
     //Метод вычисления выживших клеток
     findSurvives(){
-        let copyArr = this.currGen.slice();
-        for (let el of copyArr){
-            let count = 0;
-            this.neithbours = this.findNeithbour(el);
-            for (let el1 of this.neithbours){
-                if(this.matchCheck(el1, this.currGen)) count++;
+        // let copyArr = this.currGen;     //slice();                  
+        for (let el of this.currGen){                                  // Пройти по всем парам кординат из массива текущего поколениия
+            let count = 0;                                             // Установить счетчик для вложенного цикла
+            this.neithbours = this.findNeithbour(el);                  // Получить соседей для каждой из живых клеток
+            for (let el1 of this.neithbours){                          // Для каждого из соседей выбраной во внешнем цикле клетки 
+                if(this.matchCheck(el1, this.currGen)) count++;        // Проверить, есть ли такая пара кординат среди живущих на данный момент клеток
+            }                                                          // Если есть увеличить счетчик совпадений 
+            if (count == 2 || count == 3){                             // Если после перебора колличество 2 или 3 - добавить рассмотренную клетку
+                this.survives.push(el);                                // исходного поколения к списку выживших
             }
-            if (count == 2 || count == 3){
-                this.survives.push(el);
-            }
-            count = 0;
+            this.neithbours = [];                                      // Очистить массив соседей
         }
-        this.neithbours = [];
-
     },
 
     //Метод вычисления соседей всех клеток
@@ -275,10 +273,13 @@ let arithmCore = {
 
     //Метод вычисления новорожденных клеток
     findNewies() {
-        for (let el of this.neithboursAll) {
-            if (this.matchCounter(el, this.neithboursAll) == 3){
-                this.newiesList.push(el);
-            }
+        let x3arr = [];
+        for (let el of this.neithboursAll) {                        
+            if (this.matchCounter(el, this.neithboursAll) == 3) x3arr.push(el);
+        }
+        x3arr.sort();
+        for (let i = 0; i < x3arr.length; i++){
+            if(i%3 == 0 ) this.newiesList.push(x3arr[i]);
         }
     },
 
@@ -295,20 +296,20 @@ let arithmCore = {
 //Объект для функций отрисовки
 let renderUnit = {
 
-    pair: [],
-
     getPair(cordPair){},
     //Создать живую клетку по кординатам в массиве переданном в параметре
     spawnOneCell(cordPair) {
         let elem = document
             .querySelector(
             `div[class="${cordPair[0]}.${cordPair[1]}_grid_el"]`);
+
+        // console.log(elem);                                                          /////////////////////////////
         elem.setAttribute('style', `background-color:${ACTIVE};`);  
     },
     //Создать конфигурацию клеток по массиву пар чисел
     spawnGen(arrPair) {
         for (let pairEl of arrPair) {
-            this.spawnOneCell(arrPair);
+            this.spawnOneCell(pairEl);
         }
     },
     //Очистить игровое поле
@@ -322,7 +323,7 @@ let renderUnit = {
 
 
 
-                // ****MAIN GAME SICLE****
+                // ****MAIN GAME CICLE****
 ////////////////////////////////////////////////////////////////
 
 function gameIteration() {
@@ -335,52 +336,18 @@ function gameIteration() {
 
     let nextGen = arithmCore.nextGenCalculus();
 
-    
+    renderUnit.clearCurrGrid();
 
-
+    renderUnit.spawnGen(nextGen);
 
 }
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 let testButton = document.getElementById('test_button');
 let testWindow = document.getElementById('output');
-testButton.onclick = function() {}
-
-
-
-
-
-
-
-
-
-
-
+testButton.onclick = function() {gameIteration()};
 
 
 
@@ -394,3 +361,51 @@ button.onclick = function() {
         field.createField(form[0].value);
     }
 }
+
+
+
+
+
+
+
+
+
+// let cell = {
+				
+//     color: DEFAULT,
+//     idnum: 1,
+//     elem: document.getElementById(`1_grid_item`),
+
+//     setCell(){
+//         this.elem = document.getElementById(`${this.idnum}_grid_item`);
+//     },
+
+//     incrId(){(this.idnum == MAX_ELEM) ? this.idnum = 1 :  this.idnum++ ; return this;},
+
+//     moveCell(){this.incrId().setCell();},
+
+//     changeColor(){
+//         this.color = (this.color == DEFAULT) ? GREEN: DEFAULT;
+//     },
+
+//     setColor(){
+//         this.changeColor();
+//         this.elem.setAttribute(`style`, `background:${this.color}`);
+//     },
+    
+
+// }
+
+// function blink(cell){
+
+//     setTimeout(() => {
+
+//         cell.setColor();
+
+//         setTimeout(()=> cell.moveCell(), 50);
+
+//     }, 50);
+//     cell.setColor();
+// }
+
+// setInterval(blink, 100, cell);
