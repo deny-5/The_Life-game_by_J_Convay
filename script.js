@@ -342,14 +342,27 @@ function gameIteration() {
 
 }
 
+let intervalID;
+
+function gameStart() {
+    if (!intervalID) {
+        intervalID = setInterval(gameIteration, 200);
+    }
+}    
+
+function gameStop() {
+    clearInterval(intervalID);
+    intervalID = null;
+}
 
 
-
-let testButton = document.getElementById('test_button');
+let srartButton = document.getElementById('start_game');
+let stopButton = document.getElementById('stop_game');
 let testWindow = document.getElementById('output');
-testButton.onclick = function() {gameIteration()};
-
-
+// testButton.onclick = function() {gameIteration()};
+// srartButton.onclick = function() {setInterval(gameIteration, 200)};
+srartButton.addEventListener('click',gameStart);
+stopButton.addEventListener('click',gameStop);
 
 
 let form = document.getElementsByName("number");
@@ -396,16 +409,3 @@ button.onclick = function() {
 
 // }
 
-// function blink(cell){
-
-//     setTimeout(() => {
-
-//         cell.setColor();
-
-//         setTimeout(()=> cell.moveCell(), 50);
-
-//     }, 50);
-//     cell.setColor();
-// }
-
-// setInterval(blink, 100, cell);
