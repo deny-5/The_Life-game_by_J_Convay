@@ -3,7 +3,7 @@
 // Аабсолютный размер - сторона квадрата сетки в px
 const SIDE = 580;
 const DEFAULT = "#bdf";
-const ACTIVE = "#b1d28f";
+const RATE = 200;
 
 
 
@@ -73,7 +73,7 @@ let field = {
 
     //Метод для реагирования на щелчок мышью
     setCell() {    
-        this.setAttribute('style', `background-color:${ACTIVE};`);       
+        this.setAttribute('style', `background-color:${settingUnit.calcColor};`);       
     },
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -245,7 +245,6 @@ let arithmCore = {
 
     //Метод вычисления выживших клеток
     findSurvives(){
-        // let copyArr = this.currGen;     //slice();                  
         for (let el of this.currGen){                                  // Пройти по всем парам кординат из массива текущего поколениия
             let count = 0;                                             // Установить счетчик для вложенного цикла
             this.neithbours = this.findNeithbour(el);                  // Получить соседей для каждой из живых клеток
@@ -304,7 +303,7 @@ let renderUnit = {
             `div[class="${cordPair[0]}.${cordPair[1]}_grid_el"]`);
 
         // console.log(elem);                                                          /////////////////////////////
-        elem.setAttribute('style', `background-color:${ACTIVE};`);  
+        elem.setAttribute('style', `background-color:${settingUnit.calcColor};`);  
     },
     //Создать конфигурацию клеток по массиву пар чисел
     spawnGen(arrPair) {
@@ -320,6 +319,32 @@ let renderUnit = {
         }
     },
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Объект для настроек игры
+let settingUnit = {
+	
+	rate: 500,
+	colorCell: "#8676c1",
+	calcColor: "",
+	Rpart: 0,
+	Gpart: 0,
+	Bpart: 0,
+	
+	redSlider: document.querySelector("#color_red"),
+	greenSlider: document.querySelector("#color_green"),
+	blueSlider: document.querySelector("#color_blue"),
+	rateSlider: document.querySelector("#rate"),
+	
+	showValue: document.querySelector("#label p"),
+	
+    concatColor() {
+        let r = this.Rpart.toString(16);
+        let g = this.Gpart.toString(16);
+        let b = this.Bpart.toString(16);
+        this.calcColor = `rgb(${r},${g},${b})`;
+    },
+	
+};
 
 
 
@@ -346,7 +371,7 @@ let intervalID;
 
 function gameStart() {
     if (!intervalID) {
-        intervalID = setInterval(gameIteration, 200);
+        intervalID = setInterval(gameIteration, settingUnit.rate);
     }
 }    
 
@@ -355,12 +380,35 @@ function gameStop() {
     intervalID = null;
 }
 
+settingUnit.redSlider.addEventListener('input', (event) => {
+    settingUnit.Rpart = event.target.value;
+    settingUnit.concatColor();
+    // settingUnit.showValue.textContent = settingUnit.calcColor;
+    settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);
+});
+settingUnit.greenSlider.addEventListener('input', (event) => {
+    settingUnit.Gpart = event.target.value;
+    settingUnit.concatColor();
+    // settingUnit.showValue.textContent = settingUnit.calcColor;
+    settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);
+});
+settingUnit.blueSlider.addEventListener('input', (event) => {
+    settingUnit.Bpart = event.target.value;
+    settingUnit.concatColor();
+    // settingUnit.showValue.textContent = settingUnit.calcColor;
+    settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);
+});
+
+settingUnit.rate = settingUnit.rateSlider.value;
+settingUnit.rateSlider.addEventListener('input', (event) => {
+	settingUnit.rate = event.target.value;
+	settingUnit.rate = 525 - settingUnit.rate;
+	// settingUnit.showValue.textContent = settingUnit.rate;
+});
 
 let srartButton = document.getElementById('start_game');
 let stopButton = document.getElementById('stop_game');
 let testWindow = document.getElementById('output');
-// testButton.onclick = function() {gameIteration()};
-// srartButton.onclick = function() {setInterval(gameIteration, 200)};
 srartButton.addEventListener('click',gameStart);
 stopButton.addEventListener('click',gameStop);
 
