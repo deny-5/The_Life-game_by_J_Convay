@@ -383,19 +383,16 @@ function gameStop() {
 settingUnit.redSlider.addEventListener('input', (event) => {
     settingUnit.Rpart = event.target.value;
     settingUnit.concatColor();
-    // settingUnit.showValue.textContent = settingUnit.calcColor;
     settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);
 });
 settingUnit.greenSlider.addEventListener('input', (event) => {
     settingUnit.Gpart = event.target.value;
     settingUnit.concatColor();
-    // settingUnit.showValue.textContent = settingUnit.calcColor;
     settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);
 });
 settingUnit.blueSlider.addEventListener('input', (event) => {
     settingUnit.Bpart = event.target.value;
     settingUnit.concatColor();
-    // settingUnit.showValue.textContent = settingUnit.calcColor;
     settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);
 });
 
@@ -403,7 +400,6 @@ settingUnit.rate = settingUnit.rateSlider.value;
 settingUnit.rateSlider.addEventListener('input', (event) => {
 	settingUnit.rate = event.target.value;
 	settingUnit.rate = 525 - settingUnit.rate;
-	// settingUnit.showValue.textContent = settingUnit.rate;
 });
 
 let srartButton = document.getElementById('start_game');

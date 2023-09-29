@@ -37,7 +37,7 @@ body {background: rgb(17,24,39);}
 	background-color: #bdf;
 }
 
-[class$='grid_el']:hover {background-color:#8676c1;}
+[class$='grid_el']:hover {border: 1px solid;}
 
 	/*#b1d28f*/
 
@@ -145,7 +145,7 @@ body {background: rgb(17,24,39);}
 	background: #fff;
 	border: 0px solid;
 	border-radius: 7px;
-	margin: 0px 15px 15px 15px;
+	margin: 0px 15px 27.5px 15px;
 	font-weight: bold;
 	height: 100px;
 }
