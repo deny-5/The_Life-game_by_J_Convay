@@ -1,14 +1,7 @@
-// SCRIPT FOR GRID GENERATION
+// SCRIPT
 
 // Аабсолютный размер - сторона квадрата сетки в px
 const SIDE = 580;
-const DEFAULT = "#bdf";
-const RATE = 200;
-
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Объект для инкапсуляции кода создания сетки
 let field = {
@@ -35,13 +28,13 @@ let field = {
             for(let j = 1; j <= this.cellNum ; j++) {
                 let newdiv = document.createElement("div");
                 newdiv.className = `${this.decartCords()}_grid_el`;
-                newdiv.onclick = this.setCell;
+                newdiv.onmousedown = this.setCell;
                 elem.append(newdiv);
                 this.elemNumb++;
             }     
         }
     },
-    
+   
     // запрашивает  у пользователя количество клеток в стороне квадратного поля
     getParam(param) {this.cellNum = +param;}, 
     
@@ -71,10 +64,16 @@ let field = {
         }
     },
 
-    //Метод для реагирования на щелчок мышью
-    setCell() {    
-        this.setAttribute('style', `background-color:${settingUnit.calcColor};`);       
-    },
+    //Метод для реагирования на щелчок мышью. Новая реализация.
+    setCell() {
+        let checked = this.getAttribute('style')
+        if (checked === `background-color:${settingUnit.calcColor};`)
+            this.setAttribute('style', ``);
+        else
+            this.setAttribute('style', `background-color:${settingUnit.calcColor};`);
+    }
+
+
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Объект для выбора живых клеток
@@ -295,7 +294,6 @@ let arithmCore = {
 //Объект для функций отрисовки
 let renderUnit = {
 
-    getPair(cordPair){},
     //Создать живую клетку по кординатам в массиве переданном в параметре
     spawnOneCell(cordPair) {
         let elem = document
@@ -372,12 +370,12 @@ let intervalID;
 function gameStart() {
     if (!intervalID) {
         intervalID = setInterval(gameIteration, settingUnit.rate);
+        startButton.setAttribute('value', `\u{2503}\u{2503}`);
+    } else {
+        clearInterval(intervalID);
+        intervalID = null; 
+        startButton.setAttribute('value', `\u{25b7}`);
     }
-}    
-
-function gameStop() {
-    clearInterval(intervalID);
-    intervalID = null;
 }
 
 settingUnit.redSlider.addEventListener('input', (event) => {
@@ -402,11 +400,10 @@ settingUnit.rateSlider.addEventListener('input', (event) => {
 	settingUnit.rate = 525 - settingUnit.rate;
 });
 
-let srartButton = document.getElementById('start_game');
+let startButton = document.getElementById('start_game');
 let stopButton = document.getElementById('stop_game');
-let testWindow = document.getElementById('output');
-srartButton.addEventListener('click',gameStart);
-stopButton.addEventListener('click',gameStop);
+
+startButton.addEventListener('click',gameStart);
 
 
 let form = document.getElementsByName("number");
@@ -418,38 +415,3 @@ button.onclick = function() {
         field.createField(form[0].value);
     }
 }
-
-
-
-
-
-
-
-
-
-// let cell = {
-				
-//     color: DEFAULT,
-//     idnum: 1,
-//     elem: document.getElementById(`1_grid_item`),
-
-//     setCell(){
-//         this.elem = document.getElementById(`${this.idnum}_grid_item`);
-//     },
-
-//     incrId(){(this.idnum == MAX_ELEM) ? this.idnum = 1 :  this.idnum++ ; return this;},
-
-//     moveCell(){this.incrId().setCell();},
-
-//     changeColor(){
-//         this.color = (this.color == DEFAULT) ? GREEN: DEFAULT;
-//     },
-
-//     setColor(){
-//         this.changeColor();
-//         this.elem.setAttribute(`style`, `background:${this.color}`);
-//     },
-    
-
-// }
-

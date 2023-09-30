@@ -4,7 +4,7 @@ body {background: rgb(17,24,39);}
 	background: rgb(255,255,147);
 	border: 0px solid ;
 	border-radius: 20px;
-	margin: 5px 200px 45px 200px;
+	margin: 5px 200px 45px 5px;
 	padding: 25px;
 	display: flex;
 	flex-direction:row;
@@ -134,7 +134,7 @@ body {background: rgb(17,24,39);}
 }
 
 [type="button"]:hover {
-	background-color: rgb(128,128,128);
+	background-color: rgb(77,143,208);
 }
 
 #pin_panel input {
