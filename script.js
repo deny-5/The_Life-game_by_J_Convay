@@ -181,66 +181,26 @@ let arithmCore = {
     },
 
     //Метод обралотки рождения клетки за пределами сетки
-    OFCheck(value) {
-        if(value > this.gridSide) return 0;
+    OWFCheck(value) {
+        if(value > this.gridSide) return 1;
         else if (value < 1) return this.gridSide;
         else return value;
     },
 
-    //Вычислить соседей данной клетки
-    findNeithbour(coupleCord) {
+    //Вычислить соседей данной клетки. Новая реализация.
+    findNeithbour(coupleCord){
         let neithb = [];
-        this.pair.push(                     //1
-            (coupleCord.slice()[0]),
-            (coupleCord.slice()[1]+1)
-        );        
-        neithb.push(this.pair);
-        this.pair = [];         
-        this.pair.push(                     //1
-            (coupleCord.slice()[0]+1),
-            (coupleCord.slice()[1])
-        );        
-        neithb.push(this.pair);
-        this.pair = [];    
-        this.pair.push(                     //1
-            (coupleCord.slice()[0]+1),
-            (coupleCord.slice()[1]-1)
-        );        
-        neithb.push(this.pair);
-        this.pair = [];        
-        this.pair.push(                     //1
-            (coupleCord.slice()[0]+1),
-            (coupleCord.slice()[1]+1)
-        );        
-        neithb.push(this.pair);
-        this.pair = [];         
-        this.pair.push(                     //1
-            (coupleCord.slice()[0]),
-            (coupleCord.slice()[1]-1)
-        );        
-        neithb.push(this.pair);
-        this.pair = [];         
-        this.pair.push(                     //1
-            (coupleCord.slice()[0]-1),
-            (coupleCord.slice()[1])
-        );        
-        neithb.push(this.pair);
-        this.pair = [];         
-        this.pair.push(                     //1
-            (coupleCord.slice()[0]-1),
-            (coupleCord.slice()[1]+1)
-        );        
-        neithb.push(this.pair);
-        this.pair = [];        
-        this.pair.push(                     //1
-            (coupleCord.slice()[0]-1),
-            (coupleCord.slice()[1]-1)
-        );        
-        neithb.push(this.pair);
-        this.pair = [];
-
-        return neithb;             //!!!
+        let checkmap = [0,1 , 1,1 , 1,0 , 1,-1 , 0,-1 , -1,-1 , -1,0 , -1,1];
+        for (let i = 0; i < checkmap.length; i +=2){
+            this.pair.push(
+                this.OWFCheck((coupleCord.slice()[0] + checkmap[i]))   ,
+                this.OWFCheck((coupleCord.slice()[1] + checkmap[i+1]))  );
+            neithb.push(this.pair);
+            this.pair = [];
+        }
+        return neithb;
     },
+
 
     //Метод вычисления выживших клеток
     findSurvives(){
@@ -297,10 +257,8 @@ let renderUnit = {
     //Создать живую клетку по кординатам в массиве переданном в параметре
     spawnOneCell(cordPair) {
         let elem = document
-            .querySelector(
-            `div[class="${cordPair[0]}.${cordPair[1]}_grid_el"]`);
-
-        // console.log(elem);                                                          /////////////////////////////
+            .querySelector(`div[class="${cordPair[0]}.${cordPair[1]}_grid_el"]`);
+        console.log(cordPair);                                                         
         elem.setAttribute('style', `background-color:${settingUnit.calcColor};`);  
     },
     //Создать конфигурацию клеток по массиву пар чисел
