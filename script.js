@@ -1,14 +1,13 @@
-// SCRIPT
+//GAMES OBJECT LIBRARY
 
-// Аабсолютный размер - сторона квадрата сетки в px
-const SIDE = 580;
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Объект для инкапсуляции кода создания сетки
 let field = {
 
     cellNum: 0,
     cellSize: 0,
     elemNumb: 1,
+    // Аабсолютный размер - сторона квадрата сетки в px
+    side : 580,
 
     // Создает квадратное поле с количеством ячеек вдоль стороны,
     // указаном пользователем. Изменяет параметры grid-контейнера,
@@ -22,7 +21,8 @@ let field = {
         elem.setAttribute(`style`,`grid-template-rows:
                                    repeat(${this.cellNum},${this.cellSize}px);
                                    grid-template-columns: 
-                                   repeat(${this.cellNum},${this.cellSize}px);`);
+                                   repeat(${this.cellNum},${this.cellSize}px);
+                                   background-color: ${settingUnit.colorField}`);
         
         for (let i = 1 ; i <= this.cellNum ; i++) {
             for(let j = 1; j <= this.cellNum ; j++) {
@@ -39,7 +39,7 @@ let field = {
     getParam(param) {this.cellNum = +param;}, 
     
     // Вычисляет размер клетки по заданному количеству и размеру поля
-    calcCellSize() { this.cellSize = SIDE / this.cellNum; },
+    calcCellSize() { this.cellSize = this.side / this.cellNum; },
 
     //Метод для создания декартовых кординат
     decartCords() {
@@ -67,15 +67,14 @@ let field = {
     //Метод для реагирования на щелчок мышью. Новая реализация.
     setCell() {
         let checked = this.getAttribute('style')
-        if (checked === `background-color:${settingUnit.calcColor};`)
+        if (checked === `background-color:${settingUnit.colorCell};`)
             this.setAttribute('style', ``);
         else
-            this.setAttribute('style', `background-color:${settingUnit.calcColor};`);
+            this.setAttribute('style', `background-color:${settingUnit.colorCell};`);
     }
 
 
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Объект для выбора живых клеток
 let selectUnit = {
 
@@ -113,7 +112,6 @@ let selectUnit = {
         return this.listOfcord;
     }
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Объет расчета нового поколения
 let arithmCore = {
     
@@ -250,7 +248,6 @@ let arithmCore = {
         this.pair = [];
     },
 } 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Объект для функций отрисовки
 let renderUnit = {
 
@@ -258,7 +255,6 @@ let renderUnit = {
     spawnOneCell(cordPair) {
         let elem = document
             .querySelector(`div[class="${cordPair[0]}.${cordPair[1]}_grid_el"]`);
-        console.log(cordPair);                                                         
         elem.setAttribute('style', `background-color:${settingUnit.calcColor};`);  
     },
     //Создать конфигурацию клеток по массиву пар чисел
@@ -275,13 +271,14 @@ let renderUnit = {
         }
     },
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Объект для настроек игры
 let settingUnit = {
 	
 	rate: 500,
-	colorCell: "#8676c1",
+    isCellChoosen: true, 
 	calcColor: "",
+    colorField: "",
+    colorCell: "",
 	Rpart: 0,
 	Gpart: 0,
 	Bpart: 0,
@@ -290,18 +287,24 @@ let settingUnit = {
 	greenSlider: document.querySelector("#color_green"),
 	blueSlider: document.querySelector("#color_blue"),
 	rateSlider: document.querySelector("#rate"),
-	
 	showValue: document.querySelector("#label p"),
+    selectRadioCell: document.querySelector("#cell"),
+    selectRadioField: document.querySelector("#field"),
 	
     concatColor() {
         let r = this.Rpart.toString(16);
         let g = this.Gpart.toString(16);
-        let b = this.Bpart.toString(16);
-        this.calcColor = `rgb(${r},${g},${b})`;
+        let b = this.Bpart.toString(16);                                         
+        return this.calcColor = `rgb(${r},${g},${b})`;       
     },
+
+    setColorCell() {this.colorCell = this.concatColor();},
+
+    setColorField() {this.colorField = this.concatColor();},
 	
 };
 
+// SCRIPT
 
 
                 // ****MAIN GAME CICLE****
@@ -339,35 +342,39 @@ function gameStart() {
 settingUnit.redSlider.addEventListener('input', (event) => {
     settingUnit.Rpart = event.target.value;
     settingUnit.concatColor();
-    settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);
-});
+    settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);});
+    
 settingUnit.greenSlider.addEventListener('input', (event) => {
     settingUnit.Gpart = event.target.value;
     settingUnit.concatColor();
-    settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);
-});
+    settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);});
+
 settingUnit.blueSlider.addEventListener('input', (event) => {
     settingUnit.Bpart = event.target.value;
     settingUnit.concatColor();
-    settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);
-});
+    settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);});
 
 settingUnit.rate = settingUnit.rateSlider.value;
 settingUnit.rateSlider.addEventListener('input', (event) => {
 	settingUnit.rate = event.target.value;
-	settingUnit.rate = 525 - settingUnit.rate;
-});
+	settingUnit.rate = 525 - settingUnit.rate;});
+
+settingUnit.selectRadioCell.addEventListener('change',() => {settingUnit.setColorCell()});
+
+settingUnit.selectRadioField.addEventListener('change',() => {settingUnit.setColorField()});
+
 
 let startButton = document.getElementById('start_game');
-let stopButton = document.getElementById('stop_game');
+
 
 startButton.addEventListener('click',gameStart);
+startButton.addEventListener('keydown', (event, gameStart) => {if(event.code == 'Space')gameStart();})
 
 
 let form = document.getElementsByName("number");
 let button = document.getElementById('button');
 button.onclick = function() {
-    if ( form[0].value < 2 || form[0].value > 100) {
+    if ( form[0].value < 2 || form[0].value > 200) {
         alert("Число должно находится в диапазоне от 2 до 100");
     } else {
         field.createField(form[0].value);
