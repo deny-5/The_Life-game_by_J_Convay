@@ -16,6 +16,18 @@ body {
 		
 }
 
+@media (max-width: 413px){
+	#flex_container {
+		background: rgb(255,255,147);
+		border: 0px solid ;
+		border-radius: 20px;
+		margin: auto;
+		padding: 25px;
+		display: flex;
+		flex-direction:column;
+	}
+}
+
 #grid_box {
 	display: inline-grid;
 	grid-gap: 1px;
@@ -150,41 +162,4 @@ body {
 #pin_panel * {
 	appearance: slider-vertical;
 	
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#output {
-	background: #fff;
-	margin: 8px 0px 0px 0px;
-	border: 2px solid;
-	border-radius: 4px;
-	display: flex;
-	height: 100%;
 }
