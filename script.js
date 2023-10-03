@@ -7,7 +7,9 @@ let field = {
     cellSize: 0,
     elemNumb: 1,
     // Аабсолютный размер - сторона квадрата сетки в px
-    side : (0.8 * window.innerHeight),
+    side : (window.innerHeight > window.innerWidth)
+        ? (0.9 * window.innerWidth)
+        : (0.9 * window.innerHeight),
 
     // Создает квадратное поле с количеством ячеек вдоль стороны,
     // указаном пользователем. Изменяет параметры grid-контейнера,
