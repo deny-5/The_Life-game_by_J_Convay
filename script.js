@@ -1,0 +1,411 @@
+//GAMES OBJECT LIBRARY
+
+// Объект для инкапсуляции кода создания сетки
+let field = {
+
+    cellNum: 0,
+    cellSize: 0,
+    elemNumb: 1,
+    // Аабсолютный размер - сторона квадрата сетки в px
+    side : (window.innerHeight > window.innerWidth)
+        ? (0.9 * window.innerWidth)
+        : (0.9 * window.innerHeight),
+
+    // Создает квадратное поле с количеством ячеек вдоль стороны,
+    // указаном пользователем. Изменяет параметры grid-контейнера,
+    // заполняет его узлами пронумерованными в атрибуте класс. 
+    createField(param) {
+        this.clearField();
+        this.getParam(param);
+        this.calcCellSize();
+
+        let elem = document.getElementById("grid_box");
+        elem.setAttribute(`style`,`grid-template-rows:
+                                   repeat(${this.cellNum},${this.cellSize}px);
+                                   grid-template-columns: 
+                                   repeat(${this.cellNum},${this.cellSize}px);
+                                   background-color: ${settingUnit.colorField}`);
+        
+        for (let i = 1 ; i <= this.cellNum ; i++) {
+            for(let j = 1; j <= this.cellNum ; j++) {
+                let newdiv = document.createElement("div");
+                newdiv.className = `${this.decartCords()}_grid_el`;
+                newdiv.onmousedown = this.setCell;
+                elem.append(newdiv);
+                this.elemNumb++;
+            }     
+        }
+    },
+   
+    // запрашивает  у пользователя количество клеток в стороне квадратного поля
+    getParam(param) {this.cellNum = +param;}, 
+    
+    // Вычисляет размер клетки по заданному количеству и размеру поля
+    calcCellSize() { this.cellSize = this.side / this.cellNum; },
+
+    //Метод для создания декартовых кординат
+    decartCords() {
+        let y = (this.elemNumb % this.cellNum == 0) 
+            ? (this.elemNumb / this.cellNum)
+            : (Math.trunc(this.elemNumb / this.cellNum)+1);
+        let x = (this.elemNumb % this.cellNum == 0)
+            ? this.cellNum
+            : this.elemNumb % this.cellNum;
+        let stringyx = `${y}.${x}`;
+        return stringyx;
+    },
+
+    //Метод для очистки сетки
+    clearField() {
+        if(this.elemNumb != 1) {
+            let node = document.getElementById("grid_box");
+            while(node.firstChild){
+                node.removeChild(node.firstChild);
+            }
+            this.elemNumb = 1;
+        }
+    },
+
+    //Метод для реагирования на щелчок мышью. Новая реализация.
+    setCell() {
+        let checked = this.getAttribute('style')
+        if (checked === `background-color:${settingUnit.colorCell};`)
+            this.setAttribute('style', ``);
+        else
+            this.setAttribute('style', `background-color:${settingUnit.colorCell};`);
+    }
+
+
+}
+//Объект для выбора живых клеток
+let selectUnit = {
+
+    listOfcells: [],
+    listOfcord: [],
+    cordPair: [],
+    //cellsCount: 0,
+
+    //Функция строковой обработки для получения пары числовых кординат
+    cordParse(string) {
+            let y = Math.trunc(parseFloat(string));
+            let pos = string.indexOf(".", 0);           //Ищет точку с начала строки
+            let cutstr = string.slice(pos+1);
+            let x = parseInt(cutstr);
+            return [y, x];
+        },
+
+    //Служебный метод очистки
+    flushAll() {
+        this.listOfcells = this.listOfcord = this.cordPair = [];
+    },
+
+    //Метод для выбора колекции элементов живых клеток
+    selectCells() {
+        this.flushAll();
+        this.listOfcells = document.querySelectorAll("#grid_box div");
+        for (let grid_el of this.listOfcells) {      
+            if(grid_el.style.backgroundColor != "") {
+                let strcord = grid_el.getAttribute("class");
+                this.cordPair = this.cordParse(strcord);
+                this.listOfcord.push(this.cordPair);
+                //this.cellsCount++;                          //Просто так
+            }
+        }
+        return this.listOfcord;
+    }
+}
+//Объет расчета нового поколения
+let arithmCore = {
+    
+    gridSide: 0,
+    currGen: [],
+
+    neithbours: [],
+    neithboursAll: [],
+    survives: [],     
+    newiesList: [],
+
+    pair:[],
+
+    //Метод инициализации получает конфигурацию текущего поколения
+    init(arr, maxNum) {
+        this.gridSide = maxNum;    
+        this.currGen = arr.slice();
+    },
+
+    //Главный метод арифметического ядра
+    //После вызова init объект имеет заполненые поля
+    //gridSide и currGen фууф)) ну поехали
+    nextGenCalculus(){
+
+        this.findSurvives();
+        this.findAllN();
+        this.findNewies();
+
+        let newGen = [];
+
+        while (this.survives.length > 0){
+            let pair = this.survives.shift();
+            newGen.push(pair);            
+        }
+
+        while (this.newiesList.length > 0){
+            let pair = this.newiesList.shift();
+            newGen.push(pair);            
+        }
+
+        this.flushObj();        
+
+        return newGen;
+    },
+    //Метод сравнения двух массивов из двух элементов
+    comparePair(arr1, arr2) {           
+        return (arr1[0] == arr2[0])?((arr1[1] == arr2[1])?true:false):false; 
+    },
+
+    //Метод проверяющий входит ли пара в массив
+    matchCheck(couple, arr) {
+        for (let el of arr){
+            if(this.comparePair(couple, el)) return true;
+        } return false;
+    },
+
+    //Вспомогательный метод для нахождения числа вхождений
+    //заданной пары в исходном массиве
+    matchCounter(couple, arr) {
+        let count = 0;
+        for (let curr of arr){
+            if (this.comparePair(curr,couple)) count++;
+        }
+        return count;
+    },
+
+    //Метод обралотки рождения клетки за пределами сетки
+    OWFCheck(value) {
+        if(value > this.gridSide) return 1;
+        else if (value < 1) return this.gridSide;
+        else return value;
+    },
+
+    //Вычислить соседей данной клетки. Новая реализация.
+    findNeithbour(coupleCord){
+        let neithb = [];
+        let checkmap = [0,1 , 1,1 , 1,0 , 1,-1 , 0,-1 , -1,-1 , -1,0 , -1,1];
+        for (let i = 0; i < checkmap.length; i +=2){
+            this.pair.push(
+                this.OWFCheck((coupleCord.slice()[0] + checkmap[i]))   ,
+                this.OWFCheck((coupleCord.slice()[1] + checkmap[i+1]))  );
+            neithb.push(this.pair);
+            this.pair = [];
+        }
+        return neithb;
+    },
+
+
+    //Метод вычисления выживших клеток
+    findSurvives(){
+        for (let el of this.currGen){                                  // Пройти по всем парам кординат из массива текущего поколениия
+            let count = 0;                                             // Установить счетчик для вложенного цикла
+            this.neithbours = this.findNeithbour(el);                  // Получить соседей для каждой из живых клеток
+            for (let el1 of this.neithbours){                          // Для каждого из соседей выбраной во внешнем цикле клетки 
+                if(this.matchCheck(el1, this.currGen)) count++;        // Проверить, есть ли такая пара кординат среди живущих на данный момент клеток
+            }                                                          // Если есть увеличить счетчик совпадений 
+            if (count == 2 || count == 3){                             // Если после перебора колличество 2 или 3 - добавить рассмотренную клетку
+                this.survives.push(el);                                // исходного поколения к списку выживших
+            }
+            this.neithbours = [];                                      // Очистить массив соседей
+        }
+    },
+
+    //Метод вычисления соседей всех клеток
+    findAllN(){
+        for (let curr of this.currGen) {
+            this.neithbours = this.findNeithbour(curr);
+            while (this.neithbours.length > 0) {
+                let pair = this.neithbours.shift();
+                this.neithboursAll.push(pair);
+            }
+        }
+        this.neithbours = [];
+    },
+
+    //Метод вычисления новорожденных клеток
+    findNewies() {
+        let x3arr = [];
+        for (let el of this.neithboursAll) {                        
+            if (this.matchCounter(el, this.neithboursAll) == 3) x3arr.push(el);
+        }
+        x3arr.sort();
+        for (let i = 0; i < x3arr.length; i++){
+            if(i%3 == 0 ) this.newiesList.push(x3arr[i]);
+        }
+    },
+
+    //Метод очистки объекта
+    flushObj(){
+        this.gridSide = 0;
+        this.currGen = [];
+        this.neithbours = [];
+        this.neithboursAll = [];
+        this.pair = [];
+    },
+} 
+//Объект для функций отрисовки
+let renderUnit = {
+
+    //Создать живую клетку по кординатам в массиве переданном в параметре
+    spawnOneCell(cordPair) {
+        let elem = document
+            .querySelector(`div[class="${cordPair[0]}.${cordPair[1]}_grid_el"]`);
+        elem.setAttribute('style', `background-color:${settingUnit.calcColor};`);  
+    },
+    //Создать конфигурацию клеток по массиву пар чисел
+    spawnGen(arrPair) {
+        for (let pairEl of arrPair) {
+            this.spawnOneCell(pairEl);
+        }
+    },
+    //Очистить игровое поле
+    clearCurrGrid() {
+        let Grid = document.querySelectorAll("div[class$='grid_el']");
+        for (let el of Grid) {
+            el.setAttribute("style", "background=''");
+        }
+    },
+}
+//Объект для настроек игры
+let settingUnit = {
+	
+	rate: 500,
+    isCellChoosen: true, 
+	calcColor: "",
+    colorField: "",
+    colorCell: "",
+	Rpart: 0,
+	Gpart: 0,
+	Bpart: 0,
+	
+	redSlider: document.querySelector("#color_red"),
+	greenSlider: document.querySelector("#color_green"),
+	blueSlider: document.querySelector("#color_blue"),
+	rateSlider: document.querySelector("#rate"),
+
+	showValueForCell:  document.querySelector("#p_colorcells"),
+    showValueForField: document.querySelector("#p_colorfield"),
+    showValueForRate: document.querySelector("#p_rate_show"),
+
+    // showValueForCell: document.querySelector("#colorcells"),
+    // showValueForField: document.querySelector("#colorfield"),
+    // showValueForRate: document.querySelector("#rate_show"),
+    
+    selectRadioCell: document.querySelector("#cell"),
+    selectRadioField: document.querySelector("#field"),
+	
+    concatColor() {
+        let r = this.Rpart.toString(16);
+        let g = this.Gpart.toString(16);
+        let b = this.Bpart.toString(16);                                         
+        return this.calcColor = `rgb(${r},${g},${b})`;       
+    },
+
+    setColorCell() {this.colorCell = this.concatColor();},
+
+    setColorField() {this.colorField = this.concatColor();},
+
+    changeSelect() {
+        this.isCellChoosen = (this.isCellChoosen) ? false : true;
+    }
+	
+};
+
+// SCRIPT
+
+
+                // ****MAIN GAME CICLE****
+////////////////////////////////////////////////////////////////
+
+function gameIteration() {
+
+    let currentSize = field.cellNum;
+
+    let currentGen = selectUnit.selectCells();
+
+    arithmCore.init(currentGen, currentSize);
+
+    let nextGen = arithmCore.nextGenCalculus();
+
+    renderUnit.clearCurrGrid();
+
+    renderUnit.spawnGen(nextGen);
+
+}
+
+let intervalID;
+
+function gameStart() {
+    if (!intervalID) {
+        intervalID = setInterval(gameIteration, settingUnit.rate);
+        startButton.setAttribute('value', `\u{2503}\u{2503}`);
+    } else {
+        clearInterval(intervalID);
+        intervalID = null; 
+        startButton.setAttribute('value', `\u{25b7}`);
+    }
+}
+
+settingUnit.redSlider.addEventListener('input', (event) => {
+    settingUnit.Rpart = event.target.value;
+    settingUnit.concatColor();
+    (settingUnit.isCellChoosen) ? settingUnit.setColorCell() : settingUnit.setColorField() ;
+    settingUnit.showValueForCell.setAttribute('style',`background: ${settingUnit.colorCell}`);
+    settingUnit.showValueForField.setAttribute('style',`background: ${settingUnit.colorField}`);
+});
+    
+settingUnit.greenSlider.addEventListener('input', (event) => {
+    settingUnit.Gpart = event.target.value;
+    settingUnit.concatColor();
+    (settingUnit.isCellChoosen) ? settingUnit.setColorCell() : settingUnit.setColorField() ;
+    settingUnit.showValueForCell.setAttribute('style',`background: ${settingUnit.colorCell}`);
+    settingUnit.showValueForField.setAttribute('style',`background: ${settingUnit.colorField}`);
+});
+
+settingUnit.blueSlider.addEventListener('input', (event) => {
+    settingUnit.Bpart = event.target.value;
+    settingUnit.concatColor();
+    (settingUnit.isCellChoosen) ? settingUnit.setColorCell() : settingUnit.setColorField() ;
+    settingUnit.showValueForCell.setAttribute('style',`background: ${settingUnit.colorCell}`);
+    settingUnit.showValueForField.setAttribute('style',`background: ${settingUnit.colorField}`);
+});
+
+settingUnit.rate = settingUnit.rateSlider.value;
+settingUnit.rateSlider.addEventListener('input', (event) => {
+	settingUnit.rate = event.target.value;
+	settingUnit.rate = 525 - settingUnit.rate;});
+
+settingUnit.selectRadioCell.addEventListener('change',() => {
+    // settingUnit.setColorCell();
+    settingUnit.changeSelect();
+});
+
+settingUnit.selectRadioField.addEventListener('change',() => {
+    // settingUnit.setColorField();
+    settingUnit.changeSelect();
+});
+
+
+let startButton = document.getElementById('start_game');
+
+
+startButton.addEventListener('click',gameStart);
+startButton.addEventListener('keydown', (event, gameStart) => {if(event.code == 'Space')gameStart();})
+
+
+let form = document.getElementsByName("number");
+let button = document.getElementById('button');
+button.onclick = function() {
+    if ( form[0].value < 2 || form[0].value > 200) {
+        alert("Число должно находится в диапазоне от 2 до 100");
+    } else {
+        field.createField(form[0].value);
+    }
+}

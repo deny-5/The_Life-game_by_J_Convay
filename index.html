@@ -2,87 +2,56 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width,initial-scale=1.0">
-		<title>Grid attempt 1</title>
-		<link rel="stylesheet" href="styles.css">
+		<meta name="viewport" content="width=device-width, maximum-scale=3, minimum-scale=0.5">
+		<!-- initial-scale=1.0 -->
+		<title>Grid field generator</title>
+		<link rel="stylesheet" href="styles_1.css">
 	</head>
 	<body>
 		<section id="flex_container">
-			<div class="grid_box">
-				<div id="1_grid_item"></div>
-				<div id="2_grid_item"></div>
-				<div id="3_grid_item"></div>
-				<div id="4_grid_item"></div>
-				<div id="5_grid_item"></div>
-				<div id="6_grid_item"></div>
-				<div id="7_grid_item"></div>
-				<div id="8_grid_item"></div>
-				<div id="9_grid_item"></div>
-				<div id="10_grid_item"></div>
-				<div id="11_grid_item"></div>
-				<div id="12_grid_item"></div>
-				<div id="13_grid_item"></div>
-				<div id="14_grid_item"></div>
-				<div id="15_grid_item"></div>
-				<div id="16_grid_item"></div>
-				<div id="17_grid_item"></div>
-				<div id="18_grid_item"></div>
-				<div id="19_grid_item"></div>
-				<div id="20_grid_item"></div>
-				<div id="21_grid_item"></div>
-				<div id="22_grid_item"></div>
-				<div id="23_grid_item"></div>
-				<div id="24_grid_item"></div>
-				<div id="25_grid_item"></div>
+			<div id="grid_box"></div>
+			<div id="flex_form">
+
+
+				<div id="input_box_1" title="2-100" >
+					<div id="header">
+						<input id="start_game" type="button" value="&#9655">
+						<input id="input" type="text" name="number">
+						<input id="button" type="button" value="Go">
+					</div>
+				</div>
+
+
+				<div id="input_box_2">
+					<div id="flex_wrapper">
+
+						<div id="selectTarget">
+							<p>Клетка
+								<input id="cell" type="radio" name="cellOrField" value="cell" checked>
+							</p>
+							<p>Поле
+								<input id="field" type="radio" name="cellOrField" value="field">
+							</p>
+						</div>
+
+						<div id="label">
+							<p id="p_colorcells"><output id="colorcells"></output></p>
+							<p id="p_rate_show"><output id="rate_show"></output></p>
+							<p id="p_colorfield"><output id="colorfield"></output></p>							
+						</div>
+
+						<div id="pin_panel">		
+							<input id="color_red" type="range" name="red" min="0" max="255">
+							<input id="color_green"	type="range" name="green" min="0" max="255">														
+							<input id="color_blue" type="range" name="blue" min="0" max="255">
+							<input id="rate" type="range" name="rate_select" min="25" max="500" step="5">
+						</div>
+
+					</div>
+				</div>
+
 			</div>
 		</section>
-		<script>
-			//OOP - REALISATION
-
-
-			const GREEN = "#b1d28f";
-			const DEFAULT = "";			
-
-			let cell = {
-				
-				color: DEFAULT,
-				idnum: 1,
-				elem: document.getElementById(`1_grid_item`),
-
-				setCell(){
-					this.elem = document.getElementById(`${this.idnum}_grid_item`);
-				},
-
-				incrId(){this.idnum++ ; return this;},
-
-				moveCell(){this.incrId().setCell();},
-
-				changeColor(){
-					this.color = (this.color == DEFAULT) ? GREEN: DEFAULT;
-				},
-
-				setColor(){
-					this.changeColor();
-					this.elem.setAttribute(`style`, `background:${this.color}`);
-				},
-				
-
-			}
-
-			function blink(cell){
-
-				setTimeout(() => {
-
-					cell.setColor();
-
-					setTimeout(()=> cell.moveCell(), 100);
-
-				}, 150);
-				cell.setColor();
-			}
-
-			setInterval(blink, 250, cell);
-
-		</script>
-	</body>
+		<script src="script.js"></script>
+    </body>
 </html>
