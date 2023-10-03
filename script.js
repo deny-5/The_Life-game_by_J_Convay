@@ -7,7 +7,7 @@ let field = {
     cellSize: 0,
     elemNumb: 1,
     // Аабсолютный размер - сторона квадрата сетки в px
-    side : 580,
+    side : (0.8 * window.innerHeight),
 
     // Создает квадратное поле с количеством ячеек вдоль стороны,
     // указаном пользователем. Изменяет параметры grid-контейнера,
@@ -287,7 +287,15 @@ let settingUnit = {
 	greenSlider: document.querySelector("#color_green"),
 	blueSlider: document.querySelector("#color_blue"),
 	rateSlider: document.querySelector("#rate"),
-	showValue: document.querySelector("#label p"),
+
+	showValueForCell:  document.querySelector("#p_colorcells"),
+    showValueForField: document.querySelector("#p_colorfield"),
+    showValueForRate: document.querySelector("#p_rate_show"),
+
+    // showValueForCell: document.querySelector("#colorcells"),
+    // showValueForField: document.querySelector("#colorfield"),
+    // showValueForRate: document.querySelector("#rate_show"),
+    
     selectRadioCell: document.querySelector("#cell"),
     selectRadioField: document.querySelector("#field"),
 	
@@ -301,6 +309,10 @@ let settingUnit = {
     setColorCell() {this.colorCell = this.concatColor();},
 
     setColorField() {this.colorField = this.concatColor();},
+
+    changeSelect() {
+        this.isCellChoosen = (this.isCellChoosen) ? false : true;
+    }
 	
 };
 
@@ -342,26 +354,41 @@ function gameStart() {
 settingUnit.redSlider.addEventListener('input', (event) => {
     settingUnit.Rpart = event.target.value;
     settingUnit.concatColor();
-    settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);});
+    (settingUnit.isCellChoosen) ? settingUnit.setColorCell() : settingUnit.setColorField() ;
+    settingUnit.showValueForCell.setAttribute('style',`background: ${settingUnit.colorCell}`);
+    settingUnit.showValueForField.setAttribute('style',`background: ${settingUnit.colorField}`);
+});
     
 settingUnit.greenSlider.addEventListener('input', (event) => {
     settingUnit.Gpart = event.target.value;
     settingUnit.concatColor();
-    settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);});
+    (settingUnit.isCellChoosen) ? settingUnit.setColorCell() : settingUnit.setColorField() ;
+    settingUnit.showValueForCell.setAttribute('style',`background: ${settingUnit.colorCell}`);
+    settingUnit.showValueForField.setAttribute('style',`background: ${settingUnit.colorField}`);
+});
 
 settingUnit.blueSlider.addEventListener('input', (event) => {
     settingUnit.Bpart = event.target.value;
     settingUnit.concatColor();
-    settingUnit.showValue.setAttribute('style',`background: ${settingUnit.calcColor}`);});
+    (settingUnit.isCellChoosen) ? settingUnit.setColorCell() : settingUnit.setColorField() ;
+    settingUnit.showValueForCell.setAttribute('style',`background: ${settingUnit.colorCell}`);
+    settingUnit.showValueForField.setAttribute('style',`background: ${settingUnit.colorField}`);
+});
 
 settingUnit.rate = settingUnit.rateSlider.value;
 settingUnit.rateSlider.addEventListener('input', (event) => {
 	settingUnit.rate = event.target.value;
 	settingUnit.rate = 525 - settingUnit.rate;});
 
-settingUnit.selectRadioCell.addEventListener('change',() => {settingUnit.setColorCell()});
+settingUnit.selectRadioCell.addEventListener('change',() => {
+    // settingUnit.setColorCell();
+    settingUnit.changeSelect();
+});
 
-settingUnit.selectRadioField.addEventListener('change',() => {settingUnit.setColorField()});
+settingUnit.selectRadioField.addEventListener('change',() => {
+    // settingUnit.setColorField();
+    settingUnit.changeSelect();
+});
 
 
 let startButton = document.getElementById('start_game');

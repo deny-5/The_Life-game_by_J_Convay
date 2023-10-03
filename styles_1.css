@@ -1,14 +1,19 @@
-body {background: rgb(17,24,39);}
+body {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgb(17,24,39);
+}
 
 #flex_container {
 	background: rgb(255,255,147);
 	border: 0px solid ;
 	border-radius: 20px;
-	margin: 5px 200px 45px 5px;
+	margin: auto;
 	padding: 25px;
 	display: flex;
 	flex-direction:row;
-	
+		
 }
 
 #grid_box {
@@ -35,100 +40,83 @@ body {background: rgb(17,24,39);}
 
 [class$='grid_el']:hover {border: 1px solid;}
 
-	/*#b1d28f*/
 
 #flex_form {
+	margin: 0px  15px 15px 15px;
 	display: flex;
 	flex-direction: column;
+	/* width: auto; */
 	
 }
 
 #input_box_1 {
 	background: rgb(255,252,194);
-	margin: 20px 0px 0px 0px;
-	padding: 1px 15px 1px 15px;
+	margin: 0px 0px 0px 0px;
+	padding: 10px;
 	border: 0.5px solid;
-	border-radius: 15px;
+	border-radius: 35px;
+	display: flex;
+	/* flex-direction: ; */
+	align-items: center;
+	justify-content: center;
+	/* width: 8em; */
 
-	font-size: small;
-	height: 15%;
+}
 
+#input_box_1 #input {
+	text-align: center;
+	width: 4.5em;
+
+}
+
+#input_box_1 #header {
 	display: flex;
 	flex-direction: column;
-	justify-content: space-evenly;
+	/* justify-content: space-evenly; */
 
 }
-
-#input_box_1 input {
-	width: 70px;
-	border: 0.5px solid;
-	border-radius: 5px;
+#header * {
+	border: 1px solid;
+	font-size: xx-large;
+	font-weight: bold;
+	margin: 0.5px;
+	height: 40px;
+	/* width: 80px;	 */
 }
+#header #input {border-radius: 5px;}
+#header :first-child {border-radius:  25px 25px 5px  5px;}
+#header :last-child {border-radius: 5px  5px 25px 25px;}
 
-#input_box_1 [class="toolbar"] {
-	display: flex;
-	justify-content: space-evenly;
-}
 
 #input_box_2 {
 	background: rgb(255,252,194);
-	margin: 0px 0px 0px 0px;
-	padding: 0px 10px;
-	border: 0.5px solid;
-	border-radius: 15px;
-	display:flex;
-	flex-direction: column;
-
-}
-#input_box_2 #header {
-	text-align: justify;
 	display: flex;
-	justify-content: space-between;
-}
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 
-#header [type="button"] {
-	border: 0.5px solid;
-	border-radius: 25px;
-
-	font-size: xx-large;
-	font-weight: bold;
-
-	margin: 10px;
-	width: 50%;
-	height: 40px;
-}
-
-#input_box_3 {
-	background: rgb(255,252,194);
 	margin: 20px 0px 0px 0px;
 	padding: 1px 15px 1px 15px;
+
 	border: 0.5px solid;
-	border-radius: 15px;
-	font-size: large;
-	height: 15%;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-evenly;
+	border-radius: 35px;
+		
 }
 
-#input_box_4 {
-	background: rgb(255,252,194);
-	margin: 0px 20px 20px 20px;
-	padding: 5px 5px 5px 5px;
-	border: 0.5px solid;
-	border-radius: 15px;
-	height: 40%;	
-}
-
-#input_box_4 #selectTarget {
+#input_box_2 #selectTarget {
 	display:flex;
 	margin: 0px;
 	padding: 0px;
-	flex-direction: row;
+}
+
+#input_box_2 #flex_wrapper {
+	display: flex;
+	flex-direction: column;
 }
 
 #pin_panel {
-	display:flex;	
+	display:flex;
+	justify-content: center;
 }
 
 [type="button"]:hover {
@@ -137,19 +125,31 @@ body {background: rgb(17,24,39);}
 
 #pin_panel input {
 	display:flex;
-	width: 40px;
+	
+	width: 30px;
 }
-#label p {
-	background: #fff;
-	border: 0px solid;
-	border-radius: 7px;
-	margin: 0px 15px 27.5px 15px;
-	font-weight: bold;
-	height: 100px;
+#label {	
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
 }
 
-[id^="color"] {
+#label p {
+	display: flex;
+	background: #fff;
+	border: 0.5px solid;
+	border-radius: 7px;
+	margin: 0px 0.5px 0px 0.5px;
+	font-weight: bold;
+	height: 50px;
+	width: 3em;
+}
+#label :first-child {border-radius: 25px 5px  5px 25px ;}
+#label :last-child {border-radius: 5px 25px 25px 5px;}
+
+#pin_panel * {
 	appearance: slider-vertical;
+	
 }
 
 
